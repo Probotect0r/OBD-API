@@ -4,7 +4,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document(collection = "messages")
 public class RpmMessage extends ProcessedMessage {
 	private int rpm;
 
