@@ -1,0 +1,15 @@
+spring:
+  profiles: dev
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: OBD
+---
+spring:
+  profiles: prod
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: OBD

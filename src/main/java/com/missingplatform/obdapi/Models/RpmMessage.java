@@ -1,20 +1,27 @@
 package com.missingplatform.obdapi.Models;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 
+@Document(collection = "messages")
 public class RpmMessage extends ProcessedMessage {
-	private int value;
+	private int rpm;
+
+	public RpmMessage() {
+
+	}
 
 	public RpmMessage(Date timestamp, int rpm) {
 		super(timestamp, "RPM");
-		this.value = rpm;
+		this.rpm = rpm;
 	}
 
-	public int getValue() {
-		return value;
+	public int getRpm() {
+		return rpm;
 	}
 
-	public void setValue(int value) {
-		this.value = value;
+	public void setRpm(int rpm) {
+		this.rpm = rpm;
 	}
 }

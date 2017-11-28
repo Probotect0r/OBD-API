@@ -1,10 +1,18 @@
 package com.missingplatform.obdapi.Models;
 
+import org.springframework.data.annotation.Id;
+
 import java.util.Date;
 
 public class ProcessedMessage {
+	@Id
+	private String id;
 	private Date timestamp;
 	private String type;
+
+	public ProcessedMessage() {
+
+	}
 
 	public ProcessedMessage(Date timestamp, String type) {
 		this.timestamp = timestamp;
@@ -25,5 +33,13 @@ public class ProcessedMessage {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

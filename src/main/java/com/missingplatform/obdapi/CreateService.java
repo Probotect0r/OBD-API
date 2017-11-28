@@ -1,40 +1,60 @@
 package com.missingplatform.obdapi;
 
+import com.missingplatform.obdapi.Models.LoadMessage;
 import com.missingplatform.obdapi.Models.ProcessedMessage;
 import com.missingplatform.obdapi.Models.RpmMessage;
+import com.missingplatform.obdapi.Models.SpeedMessage;
+import com.missingplatform.obdapi.Repositories.EngineLoadReopsitory;
+import com.missingplatform.obdapi.Repositories.RpmReopsitory;
+import com.missingplatform.obdapi.Repositories.SpeedRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
 public class CreateService {
+	@Autowired
+	RpmReopsitory rpmReopsitory;
+	@Autowired
+	EngineLoadReopsitory engineLoadReopsitory;
+	@Autowired
+	SpeedRepository speedRepository;
+
 	public CreateService() {
 	}
 
 	public void processMessage(RawMessage rawMessage) {
-		// 1. Determine the Command (done)
-		// 2. Determine the "response" (done)
-		// 3. Calculate the value (done)
-		// 4. Set up timestamp (done)
-		// 5. Write to MongoDB
-
 		String message = rawMessage.getRawMessage();
 		String[] parts = message.split("\n");
 		String command = parts[0].trim();
 		String response = parts[1].trim();
+		// Note: first 4 bytes of response is 41 + PID (ex. 410C)
 
 		System.out.println("Command: " + command);
 		System.out.println("Response: " + response);
 
-		ProcessedMessage processedMessage;
 		switch (command) {
-			case "010c":
+			// RPM
+			case "010C":
 				int rpm = calculateRPM(response);
-				processedMessage = new RpmMessage(new Date(), rpm);
+				RpmMessage rpmMessage = new RpmMessage(new Date(), rpm);
+				rpmReopsitory.save(rpmMessage);
+				break;
+
+			// Engine load
+			case "0104":
+				int load = calculateEngineLoad(response);
+				engineLoadReopsitory.save(new LoadMessage(new Date(), load));
+				break;
+
+			// Vehicle Speed
+			case "010D":
+				int speed = calculateSpeed(response);
+				speedRepository.save(new SpeedMessage(new Date(), speed));
 				break;
 		}
 
-		// Write to mongodb
 	}
 
 	public int calculateRPM(String response) {
@@ -48,4 +68,25 @@ public class CreateService {
 		int rpm = ((256 * a) + b) / 4;
 		return rpm;
 	}
+
+	public int calculateEngineLoad(String response) {
+		String byteA = response.substring(4);
+		int a = Integer.parseInt(byteA, 16);
+		System.out.println("Load: " + a);
+		int load = (100 * a) / 255;
+		System.out.println("Load: " + load);
+		return load;
+	}
+
+	public int calculateSpeed(String response) {
+		String byteA = response.substring(4);
+		int speed = Integer.parseInt(byteA, 16);
+		return speed;
+	}
+
+	public int calculateThrottlePosition(String response) {
+		return 0;
+	}
+
+
 }
