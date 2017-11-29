@@ -43,7 +43,7 @@ public class CreateService {
 				break;
 
 			// Engine load
-			case "0104":
+			case "0111":
 				int load = calculateEngineLoad(response);
 				engineLoadReopsitory.save(new LoadMessage(new Date(), load));
 				break;

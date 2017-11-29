@@ -28,20 +28,38 @@ public class CreateController {
 
 	@GetMapping("/rpm")
 	public List<RpmMessage> getAllRpmMessages() {
-		List<RpmMessage> messages = (List<RpmMessage>) rpmReopsitory.findAll();
+		List<RpmMessage> messages = rpmReopsitory.findTop10ByOrderByTimestampDesc();
 		return messages;
+	}
+
+	@GetMapping("/rpm/latest")
+	public RpmMessage getLatestRpmMessage() {
+		RpmMessage message = rpmReopsitory.findTopByOrderByTimestampDesc();
+		return message;
 	}
 
 	@GetMapping("/load")
 	public List<LoadMessage> getAllLoadMessages() {
-		List<LoadMessage> messages = (List<LoadMessage>) engineLoadReopsitory.findAll();
+		List<LoadMessage> messages = engineLoadReopsitory.findTop10ByOrderByTimestampDesc();
 		return messages;
+	}
+
+	@GetMapping("/load/latest")
+	public LoadMessage getLatestLoadMessage() {
+		LoadMessage message = engineLoadReopsitory.findTopByOrderByTimestampDesc();
+		return message;
 	}
 
 	@GetMapping("/speed")
 	public List<SpeedMessage> getAllSpeedMessages() {
-		List<SpeedMessage> messages = (List<SpeedMessage>) speedRepository.findAll();
+		List<SpeedMessage> messages = speedRepository.findTop10ByOrderByTimestampDesc();
 		return messages;
+	}
+
+	@GetMapping("/speed/latest")
+	public SpeedMessage getLatestSpeedMessage() {
+		SpeedMessage message = speedRepository.findTopByOrderByTimestampDesc();
+		return message;
 	}
 
 	@Autowired
