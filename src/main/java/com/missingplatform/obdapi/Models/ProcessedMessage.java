@@ -3,16 +3,16 @@ package com.missingplatform.obdapi.Models;
 import org.springframework.data.annotation.Id;
 
 import java.util.Date;
+import java.util.Map;
 
 public class ProcessedMessage {
 	@Id
 	private String id;
 	private Date timestamp;
 	private String type;
+	private Map<String, Object> values;
 
-	public ProcessedMessage() {
-
-	}
+	public ProcessedMessage() {}
 
 	public ProcessedMessage(Date timestamp, String type) {
 		this.timestamp = timestamp;
