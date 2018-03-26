@@ -8,15 +8,15 @@ import java.util.Map;
 public class ProcessedMessage {
 	@Id
 	private String id;
+	private String driveId;
 	private Date timestamp;
-	private String type;
-	private Map<String, Object> values;
+	private Map<String, Integer> values;
 
 	public ProcessedMessage() {}
 
-	public ProcessedMessage(Date timestamp, String type) {
-		this.timestamp = timestamp;
-		this.type = type;
+	public ProcessedMessage(Map<String, Integer> values) {
+		this.values = values;
+		this.timestamp = new Date();
 	}
 
 	public Date getTimestamp() {
@@ -27,19 +27,27 @@ public class ProcessedMessage {
 		this.timestamp = timestamp;
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public String getId() {
 		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getDriveId() {
+		return driveId;
+	}
+
+	public void setDriveId(String driveId) {
+		this.driveId = driveId;
+	}
+
+	public Map<String, Integer> getValues() {
+		return values;
+	}
+
+	public void setValues(Map<String, Integer> values) {
+		this.values = values;
 	}
 }

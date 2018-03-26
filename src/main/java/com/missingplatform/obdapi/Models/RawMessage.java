@@ -14,4 +14,11 @@ public class RawMessage {
 	public void setRawMessages(Map<String, String> rawMessages) {
 		this.rawMessages = rawMessages;
 	}
+
+	@Override
+	public String toString() {
+		return "RawMessage{" +
+				"rawMessages=" + rawMessages +
+				'}';
+	}
 }

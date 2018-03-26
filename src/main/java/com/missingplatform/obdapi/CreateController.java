@@ -14,4 +14,14 @@ public class CreateController {
 		this.createService.processMessages(rawMessage);
 		return rawMessage;
 	}
+
+	@GetMapping("/drive/new")
+	public Drive createDrive() {
+		return this.createService.createDrive();
+	}
+
+	@PutMapping("/drive/end/:driveId")
+	public Drive endDrive(@PathVariable String driveId) {
+		return this.createService.endDrive(driveId);
+	}
 }

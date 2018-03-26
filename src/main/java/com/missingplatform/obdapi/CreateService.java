@@ -1,56 +1,73 @@
 package com.missingplatform.obdapi;
 
+import com.missingplatform.obdapi.Models.Drive;
+import com.missingplatform.obdapi.Models.ProcessedMessage;
 import com.missingplatform.obdapi.Models.RawMessage;
+import com.missingplatform.obdapi.Repositories.DriveRepository;
+import com.missingplatform.obdapi.Repositories.ProcessedMessageRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class CreateService {
-	public CreateService() {
+
+	@Autowired
+	private ProcessedMessageRepository processedMessageRepository;
+
+	@Autowired
+	private DriveRepository driveRepository;
+
+	public CreateService() {}
+
+	public Drive createDrive() {
+		Drive drive = new Drive();
+		return this.driveRepository.save(drive);
+	}
+
+	public Drive endDrive(String driveId) {
+		Drive drive = this.driveRepository.findOne(driveId);
+		drive.setEnd(new Date());
+		this.driveRepository.save(drive);
+
+		return drive;
 	}
 
 	public void processMessages(RawMessage rawMessage) {
 		Map<String, String> messages = rawMessage.getRawMessages();
+
+		Map<String, Integer> processedValues = new HashMap<>();
+
 		for (String key : messages.keySet()) {
 			String value = messages.get(key);
-			System.out.println(key + value);
-//			processMessage(key, value);
+			processedValues.put(key, processMessage(key, value));
 		}
 
-//		splitMessage();
+		System.out.println(processedValues);
+		ProcessedMessage processedMessage = new ProcessedMessage(processedValues);
+
+		this.processedMessageRepository.save(processedMessage);
 	}
-//
-//	private void splitMessage() {
-//		String[] parts = message.split("\n");
-//		String command = parts[0].trim();
-//		String response = parts[1].trim();
-//		// Note: first 4 bytes of response is 41 + PID (ex. 410C)
-//	}
-//
-//	private void processMessage(String key, String value) {
-//		switch (key) {
-//			// RPM
-//			case "RPM":
-//				int rpm = calculateRPM(messages.get(key));
-//				RpmMessage rpmMessage = new RpmMessage(new Date(), rpm);
-//				rpmReopsitory.save(rpmMessage);
-//				break;
-//
-//			// Engine load
-//			case "THROTTLE_POSITION":
-//				int load = calculateEngineLoad(messages.get(key));
-//				engineLoadReopsitory.save(new LoadMessage(new Date(), load));
-//				break;
-//
-//			// Vehicle Speed
-//			case "SPEED":
-//				int speed = calculateSpeed(messages.get(key));
-//				speedRepository.save(new SpeedMessage(new Date(), speed));
-//				break;
-//		}
-//
-//	}
+
+	private Integer processMessage(String key, String response) {
+		String[] parts = response.split("\n");
+		String command = parts[0].trim();
+		String value = parts[1].trim();
+
+		switch (key) {
+			case "RPM":
+				return calculateRPM(value);
+			case "THROTTLE_POSITION":
+				return calculateEngineLoad(value);
+			case "SPEED":
+				return calculateSpeed(value);
+			default:
+				return 0;
+		}
+	}
 
 	public int calculateRPM(String response) {
 		String valueBytes = response.substring(4);
@@ -67,7 +84,6 @@ public class CreateService {
 	public int calculateEngineLoad(String response) {
 		String byteA = response.substring(4);
 		int a = Integer.parseInt(byteA, 16);
-		System.out.println("Load: " + a);
 		int load = (100 * a) / 255;
 		System.out.println("Load: " + load);
 		return load;

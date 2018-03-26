@@ -6,6 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface ProcessedMessageRepository extends CrudRepository<ProcessedMessage, String> {
-	ProcessedMessage findTopByOrderByTimestampDesc();
-	List<ProcessedMessage> findTop10ByOrderByTimestampDesc();
+	List<ProcessedMessage> findByDriveId(String driveId);
 }
