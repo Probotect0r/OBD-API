@@ -1,5 +1,6 @@
 package com.missingplatform.obdapi.Models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 
 import java.util.Date;
@@ -7,7 +8,10 @@ import java.util.Date;
 public class Drive {
 	@Id
 	String id;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private Date start;
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private Date end;
 
 	public Drive() {

@@ -14,9 +14,10 @@ public class ProcessedMessage {
 
 	public ProcessedMessage() {}
 
-	public ProcessedMessage(Map<String, Integer> values) {
+	public ProcessedMessage(Map<String, Integer> values, String driveId) {
 		this.values = values;
 		this.timestamp = new Date();
+		this.driveId = driveId;
 	}
 
 	public Date getTimestamp() {

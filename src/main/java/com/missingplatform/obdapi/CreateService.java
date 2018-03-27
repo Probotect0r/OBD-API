@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -23,19 +24,6 @@ public class CreateService {
 
 	public CreateService() {}
 
-	public Drive createDrive() {
-		Drive drive = new Drive();
-		return this.driveRepository.save(drive);
-	}
-
-	public Drive endDrive(String driveId) {
-		Drive drive = this.driveRepository.findOne(driveId);
-		drive.setEnd(new Date());
-		this.driveRepository.save(drive);
-
-		return drive;
-	}
-
 	public void processMessages(RawMessage rawMessage) {
 		Map<String, String> messages = rawMessage.getRawMessages();
 
@@ -47,7 +35,7 @@ public class CreateService {
 		}
 
 		System.out.println(processedValues);
-		ProcessedMessage processedMessage = new ProcessedMessage(processedValues);
+		ProcessedMessage processedMessage = new ProcessedMessage(processedValues, rawMessage.getDriveId());
 
 		this.processedMessageRepository.save(processedMessage);
 	}
@@ -69,7 +57,7 @@ public class CreateService {
 		}
 	}
 
-	public int calculateRPM(String response) {
+	private int calculateRPM(String response) {
 		String valueBytes = response.substring(4);
 		String byteA = valueBytes.substring(0, 2);
 		String byteB = valueBytes.substring(2);
@@ -81,7 +69,7 @@ public class CreateService {
 		return rpm;
 	}
 
-	public int calculateEngineLoad(String response) {
+	private int calculateEngineLoad(String response) {
 		String byteA = response.substring(4);
 		int a = Integer.parseInt(byteA, 16);
 		int load = (100 * a) / 255;
@@ -89,9 +77,30 @@ public class CreateService {
 		return load;
 	}
 
-	public int calculateSpeed(String response) {
+	private int calculateSpeed(String response) {
 		String byteA = response.substring(4);
 		int speed = Integer.parseInt(byteA, 16);
 		return speed;
+	}
+
+	public List<Drive> recentDrives() {
+		return this.driveRepository.findTop5ByOrderByStartDesc();
+	}
+
+	public Drive createDrive() {
+		Drive drive = new Drive();
+		return this.driveRepository.save(drive);
+	}
+
+	public Drive endDrive(String driveId) {
+		Drive drive = this.driveRepository.findOne(driveId);
+		drive.setEnd(new Date());
+		this.driveRepository.save(drive);
+
+		return drive;
+	}
+
+	public List<ProcessedMessage> findDataByDriveId(String driveId) {
+		return this.processedMessageRepository.findByDriveId(driveId);
 	}
 }
