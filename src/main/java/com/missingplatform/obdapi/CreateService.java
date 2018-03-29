@@ -52,6 +52,10 @@ public class CreateService {
 				return calculateEngineLoad(value);
 			case "SPEED":
 				return calculateSpeed(value);
+			case "COOLANT_TEMPERATURE":
+				return calculateCoolantTemperature(value);
+			case "FUEL_PRESSURE":
+				return calculateFuelPressure(value);
 			default:
 				return 0;
 		}
@@ -83,6 +87,19 @@ public class CreateService {
 		return speed;
 	}
 
+	private int calculateCoolantTemperature(String response) {
+		String byteA = response.substring(4);
+		int a = Integer.parseInt(byteA, 16);
+		int temp = a - 40;
+		return temp;
+	}
+
+	private int calculateFuelPressure(String response) {
+		String byteA = response.substring(4);
+		int a = Integer.parseInt(byteA, 16);
+		return 3 * a;
+	}
+
 	public List<Drive> recentDrives() {
 		return this.driveRepository.findTop5ByOrderByStartDesc();
 	}
@@ -102,5 +119,9 @@ public class CreateService {
 
 	public List<ProcessedMessage> findDataByDriveId(String driveId) {
 		return this.processedMessageRepository.findByDriveId(driveId);
+	}
+
+	public List<Drive> findDriveByDate(Date date) {
+		return this.findDriveByDate(date);
 	}
 }

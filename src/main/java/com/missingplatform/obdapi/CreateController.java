@@ -4,6 +4,7 @@ import com.missingplatform.obdapi.Models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -36,5 +37,10 @@ public class CreateController {
 	@PutMapping("/drive/end/{driveId}")
 	public Drive endDrive(@PathVariable String driveId) {
 		return this.createService.endDrive(driveId);
+	}
+
+	@GetMapping("/drive/find/{date}")
+	public List<Drive> findDrives(@PathVariable Date date) {
+		return this.createService.findDriveByDate(date);
 	}
 }
