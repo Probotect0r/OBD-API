@@ -56,6 +56,8 @@ public class CreateService {
 				return calculateCoolantTemperature(value);
 			case "FUEL_PRESSURE":
 				return calculateFuelPressure(value);
+			case "MAF":
+				return calculateMAF(value);
 			default:
 				return 0;
 		}
@@ -77,7 +79,6 @@ public class CreateService {
 		String byteA = response.substring(4);
 		int a = Integer.parseInt(byteA, 16);
 		int load = (100 * a) / 255;
-		System.out.println("Load: " + load);
 		return load;
 	}
 
@@ -98,6 +99,18 @@ public class CreateService {
 		String byteA = response.substring(4);
 		int a = Integer.parseInt(byteA, 16);
 		return 3 * a;
+	}
+
+	private int calculateMAF(String response) {
+		String valueBytes = response.substring(4);
+		String byteA = valueBytes.substring(0, 2);
+		String byteB = valueBytes.substring(2);
+
+		int a = Integer.parseInt(byteA, 16);
+		int b = Integer.parseInt(byteB, 16);
+
+		int maf = ((256 * a) + b) / 100;
+		return maf;
 	}
 
 	public List<Drive> recentDrives() {
