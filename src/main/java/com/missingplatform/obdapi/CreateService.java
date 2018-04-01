@@ -149,6 +149,10 @@ public class CreateService {
 	}
 
 	public List<Drive> findDriveByDate(Date date) {
-		return this.findDriveByDate(date);
+		return driveRepository.findByStart(date);
+	}
+
+	public Drive getPreviousDrive() {
+		return driveRepository.findTopByOrderByStartDesc();
 	}
 }

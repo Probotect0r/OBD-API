@@ -43,4 +43,9 @@ public class CreateController {
 	public List<Drive> findDrives(@PathVariable Date date) {
 		return this.createService.findDriveByDate(date);
 	}
+
+	@GetMapping("/drive/previous")
+	public Drive getPrevious() {
+		return createService.getPreviousDrive();
+	}
 }
