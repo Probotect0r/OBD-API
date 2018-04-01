@@ -58,6 +58,8 @@ public class CreateService {
 				return calculateFuelPressure(value);
 			case "MAF":
 				return calculateMAF(value);
+			case "FUEL_RATE":
+				return calculateFuelRate(value);
 			default:
 				return 0;
 		}
@@ -111,6 +113,18 @@ public class CreateService {
 
 		int maf = ((256 * a) + b) / 100;
 		return maf;
+	}
+
+	private int calculateFuelRate(String response) {
+		String valueBytes = response.substring(4);
+		String byteA = valueBytes.substring(0, 2);
+		String byteB = valueBytes.substring(2);
+
+		int a = Integer.parseInt(byteA, 16);
+		int b = Integer.parseInt(byteB, 16);
+
+		int fuelRate = ((256 * a) + b) / 20;
+		return fuelRate;
 	}
 
 	public List<Drive> recentDrives() {
