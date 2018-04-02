@@ -10,11 +10,11 @@ public class ProcessedMessage {
 	private String id;
 	private String driveId;
 	private Date timestamp;
-	private Map<String, Integer> values;
+	private Map<String, Object> values;
 
 	public ProcessedMessage() {}
 
-	public ProcessedMessage(Map<String, Integer> values, String driveId) {
+	public ProcessedMessage(Map<String, Object> values, String driveId) {
 		this.values = values;
 		this.timestamp = new Date();
 		this.driveId = driveId;
@@ -44,11 +44,11 @@ public class ProcessedMessage {
 		this.driveId = driveId;
 	}
 
-	public Map<String, Integer> getValues() {
+	public Map<String, Object> getValues() {
 		return values;
 	}
 
-	public void setValues(Map<String, Integer> values) {
+	public void setValues(Map<String, Object> values) {
 		this.values = values;
 	}
 }

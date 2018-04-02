@@ -18,9 +18,13 @@ public class CreateController {
 		return rawMessage;
 	}
 
+	@GetMapping("/data/latest")
+	public ProcessedMessage getLatestMessage() {
+		return createService.getLatestMessage();
+	}
+
 	@GetMapping("/data/{driveId}")
 	public List<ProcessedMessage> getDataByDriveId(@PathVariable String driveId) {
-		System.out.println(driveId);
 		return this.createService.findDataByDriveId(driveId);
 	}
 

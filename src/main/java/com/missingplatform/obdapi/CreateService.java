@@ -24,23 +24,59 @@ public class CreateService {
 
 	public CreateService() {}
 
+	public List<Drive> recentDrives() {
+		return this.driveRepository.findTop5ByOrderByStartDesc();
+	}
+
+	public Drive createDrive() {
+		Drive drive = new Drive();
+		return this.driveRepository.save(drive);
+	}
+
+	public Drive endDrive(String driveId) {
+		Drive drive = this.driveRepository.findOne(driveId);
+		drive.setEnd(new Date());
+		this.driveRepository.save(drive);
+
+		return drive;
+	}
+
+	public List<ProcessedMessage> findDataByDriveId(String driveId) {
+		return this.processedMessageRepository.findByDriveId(driveId);
+	}
+
+	public List<Drive> findDriveByDate(Date date) {
+		return driveRepository.findByStart(date);
+	}
+
+	public Drive getPreviousDrive() {
+		return driveRepository.findTopByOrderByStartDesc();
+	}
+
+	public ProcessedMessage getLatestMessage() {
+		return processedMessageRepository.findTopByOrderByTimestampDesc();
+	}
+
 	public void processMessages(RawMessage rawMessage) {
 		Map<String, String> messages = rawMessage.getRawMessages();
 
-		Map<String, Integer> processedValues = new HashMap<>();
+		Map<String, Object> processedValues = new HashMap<>();
 
 		for (String key : messages.keySet()) {
 			String value = messages.get(key);
 			processedValues.put(key, processMessage(key, value));
 		}
 
-		System.out.println(processedValues);
-		ProcessedMessage processedMessage = new ProcessedMessage(processedValues, rawMessage.getDriveId());
+		double fuelEconomy = calculateFuelEconomy((int) processedValues.get("SPEED"), (int) processedValues.get("MAF"));
+		processedValues.put("FUEL_ECONOMY", fuelEconomy);
 
-		this.processedMessageRepository.save(processedMessage);
+		System.out.println(processedValues);
+
+		ProcessedMessage processedMessage = new ProcessedMessage(processedValues, rawMessage.getDriveId());
+		processedMessageRepository.save(processedMessage);
 	}
 
-	private Integer processMessage(String key, String response) {
+	private Object processMessage(String key, String response) {
 		String[] parts = response.split("\n");
 		String command = parts[0].trim();
 		String value = parts[1].trim();
@@ -50,6 +86,8 @@ public class CreateService {
 				return calculateRPM(value);
 			case "THROTTLE_POSITION":
 				return calculateEngineLoad(value);
+			case "ENGINE_LOAD":
+				return calculateEngineLoad(value);
 			case "SPEED":
 				return calculateSpeed(value);
 			case "COOLANT_TEMPERATURE":
@@ -58,8 +96,10 @@ public class CreateService {
 				return calculateFuelPressure(value);
 			case "MAF":
 				return calculateMAF(value);
-			case "FUEL_RATE":
-				return calculateFuelRate(value);
+			case "FUEL_SYSTEM_STATUS":
+				return calculateFuelSystemStatus(value);
+//			case "FUEL_RATE":
+//				return calculateFuelRate(value);
 			default:
 				return 0;
 		}
@@ -127,32 +167,27 @@ public class CreateService {
 		return fuelRate;
 	}
 
-	public List<Drive> recentDrives() {
-		return this.driveRepository.findTop5ByOrderByStartDesc();
+	private String calculateFuelSystemStatus(String response) {
+		String valueBytes = response.substring(4);
+		String byteA = valueBytes.substring(0, 2);
+		int a = Integer.parseInt(byteA, 16);
+		switch (a) {
+			case 1:
+				return "Insufficient Engine Temperature";
+			case 2:
+				return "Good";
+			case 4:
+				return "High engine load";
+			case 8:
+				return "System failure";
+			case 16:
+				return "Functioning, but has system failure";
+			default:
+				return "Good";
+		}
 	}
 
-	public Drive createDrive() {
-		Drive drive = new Drive();
-		return this.driveRepository.save(drive);
-	}
-
-	public Drive endDrive(String driveId) {
-		Drive drive = this.driveRepository.findOne(driveId);
-		drive.setEnd(new Date());
-		this.driveRepository.save(drive);
-
-		return drive;
-	}
-
-	public List<ProcessedMessage> findDataByDriveId(String driveId) {
-		return this.processedMessageRepository.findByDriveId(driveId);
-	}
-
-	public List<Drive> findDriveByDate(Date date) {
-		return driveRepository.findByStart(date);
-	}
-
-	public Drive getPreviousDrive() {
-		return driveRepository.findTopByOrderByStartDesc();
+	private double calculateFuelEconomy(int speed, int maf) {
+		return (3600 * maf)/(9069.90 * speed);
 	}
 }
