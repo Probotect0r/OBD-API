@@ -57,6 +57,10 @@ public class CreateService {
 		return processedMessageRepository.findTopByOrderByTimestampDesc();
 	}
 
+	public List<ProcessedMessage> getLastTenMessages() {
+		return processedMessageRepository.findTop10ByOrderByTimestampDesc();
+	}
+
 	public void processMessages(RawMessage rawMessage) {
 		Map<String, String> messages = rawMessage.getRawMessages();
 

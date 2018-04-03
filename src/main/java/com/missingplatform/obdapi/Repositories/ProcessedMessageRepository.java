@@ -8,4 +8,5 @@ import java.util.List;
 public interface ProcessedMessageRepository extends CrudRepository<ProcessedMessage, String> {
 	List<ProcessedMessage> findByDriveId(String driveId);
 	ProcessedMessage findTopByOrderByTimestampDesc();
+	List<ProcessedMessage> findTop10ByOrderByTimestampDesc();
 }

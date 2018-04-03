@@ -18,6 +18,11 @@ public class CreateController {
 		return rawMessage;
 	}
 
+	@GetMapping("/data/latest/ten")
+	public List<ProcessedMessage> getLast10Messages() {
+		return createService.getLastTenMessages();
+	}
+
 	@GetMapping("/data/latest")
 	public ProcessedMessage getLatestMessage() {
 		return createService.getLatestMessage();
