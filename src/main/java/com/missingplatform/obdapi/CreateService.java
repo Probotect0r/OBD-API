@@ -85,6 +85,10 @@ public class CreateService {
 		String command = parts[0].trim();
 		String value = parts[1].trim();
 
+		if("NODATA".equals(value)) {
+			return null;
+		}
+
 		switch (key) {
 			case "RPM":
 				return calculateRPM(value);
@@ -102,8 +106,6 @@ public class CreateService {
 				return calculateMAF(value);
 			case "FUEL_SYSTEM_STATUS":
 				return calculateFuelSystemStatus(value);
-//			case "FUEL_RATE":
-//				return calculateFuelRate(value);
 			default:
 				return 0;
 		}
