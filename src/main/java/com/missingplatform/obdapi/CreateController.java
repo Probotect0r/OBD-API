@@ -57,4 +57,9 @@ public class CreateController {
 	public Drive getPrevious() {
 		return createService.getPreviousDrive();
 	}
+
+	@GetMapping("/set/engine_load/{load}")
+	public void findDrives(@PathVariable int load) {
+		createService.setEngine_load(load);
+	}
 }

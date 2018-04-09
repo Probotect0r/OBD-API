@@ -15,6 +15,7 @@ import java.util.Map;
 
 @Service
 public class CreateService {
+	private int engine_load = 50;
 
 	@Autowired
 	private ProcessedMessageRepository processedMessageRepository;
@@ -93,7 +94,7 @@ public class CreateService {
 			case "RPM":
 				return calculateRPM(value);
 			case "THROTTLE_POSITION":
-				return calculateEngineLoad(value);
+				return engine_load;
 			case "ENGINE_LOAD":
 				return calculateEngineLoad(value);
 			case "SPEED":
@@ -195,5 +196,10 @@ public class CreateService {
 
 	private double calculateFuelEconomy(int speed, int maf) {
 		return (3600 * maf)/(9069.90 * speed);
+	}
+
+	public void setEngine_load(int engine_load) {
+		this.engine_load = engine_load;
+		System.out.println(engine_load);
 	}
 }
